@@ -5,11 +5,12 @@ export default abstract class Environment {
 
   abstract init(): void;
 
-  abstract turn(): void;
+  abstract turn(ctx: Worker): void;
 
   abstract serializePlayers(): any[]
 
-  performTurn() {
-    this.lastUpdate = new Date().getMilliseconds();
+  performTurn(ctx: Worker) {
+    this.turn(ctx);
+    this.lastUpdate = new Date().getTime();
   }
 }

@@ -1,5 +1,6 @@
 import P5 from "p5";
-import {TestPlayerRenderable} from "../evolution-env/TestPlayer";
+import { TestPlayerRenderable } from "../evolution-env/TestPlayer";
+import EvolutionEnvironment from "../evolution-env/EvolutionEnvironment";
 
 export interface IRenderable {
   render(p5: P5): void;
@@ -16,7 +17,7 @@ export default class Render extends P5 {
   };
 
   setup = () => {
-    this.createCanvas(800, 800);
+    this.createCanvas(EvolutionEnvironment.WIDTH, EvolutionEnvironment.HEIGHT);
     // this.frameRate(30);
   };
 

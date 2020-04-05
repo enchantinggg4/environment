@@ -5,6 +5,7 @@ export default abstract class Player<T extends Environment> {
   x: number = 0;
   y: number = 0;
 
+  abstract get json(): any
   public get location(): Vector {
     return new Vector(this.x, this.y);
   }
