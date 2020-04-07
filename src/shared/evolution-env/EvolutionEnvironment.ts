@@ -3,11 +3,12 @@ import TestPlayer from "./TestPlayer";
 import { Neat, architect, methods } from "neataptic";
 import Food from "./Food";
 import Player from "../env/player/Player";
+import { Postable } from "./Postable";
 
 export default class EvolutionEnvironment extends Environment {
   static WIDTH = 1600;
-  static HEIGHT = 1200;
-  static INPUT_FOOD_COUNT = 3;
+  static HEIGHT = 1600;
+  static INPUT_FOOD_COUNT = 1;
   static INPUT_COUNT = EvolutionEnvironment.INPUT_FOOD_COUNT * 2;
   static POP_SIZE = 50;
   static OUTPUT_COUNT = 2;
@@ -50,7 +51,9 @@ export default class EvolutionEnvironment extends Environment {
 
     // Elitism
     for (let i = 0; i < this.neat.elitism; i++) {
-      newPopulation.push(this.neat.population[i]);
+      const elite: any = this.neat.population[i];
+      elite.elite = true;
+      newPopulation.push(elite);
     }
 
     // Breed the next individuals
@@ -62,7 +65,9 @@ export default class EvolutionEnvironment extends Environment {
       "Generation ",
       this.neat.generation,
       "finished. Best is ",
-      this.neat.population[0].score
+      this.neat.population[0].score,
+      "Average is",
+      this.neat.getAverage()
     );
 
     // Replace the old population with the new population
@@ -71,7 +76,12 @@ export default class EvolutionEnvironment extends Environment {
     this.neat.generation++;
 
     this.initFoods();
-    this._players.forEach((it) => (it.brain.score = 0));
+    this._players = this.neat.population.map((it) => {
+      const p = new TestPlayer(it);
+      p.x = Math.random() * EvolutionEnvironment.WIDTH;
+      p.y = Math.random() * EvolutionEnvironment.HEIGHT;
+      return p;
+    });
   }
 
   init() {
@@ -114,27 +124,32 @@ export default class EvolutionEnvironment extends Environment {
     this.initFoods();
   }
 
-  turn(ctx: Worker): void {
+  turn(ctx: Postable): void {
     this.iteration++;
-    this._players.forEach((it) => {
+
+    for (let it of this._players) {
       it.update(this);
       if (it.x > EvolutionEnvironment.WIDTH) it.x = 0;
       if (it.x < 0) it.x = EvolutionEnvironment.WIDTH;
 
       if (it.y > EvolutionEnvironment.HEIGHT) it.y = 0;
       if (it.y < 0) it.y = EvolutionEnvironment.HEIGHT;
-    });
-    this._foods.forEach((it) => {
+    }
+    for (let it of this._foods) {
       it.update(this);
-    });
+    }
+
     if (this.iteration === EvolutionEnvironment.ITERS) {
       this.iteration = 0;
       ctx.postMessage({
-        type: "best",
+        type: "generationFinished",
         best: (() => {
           this.neat.sort();
           return this.neat.population[0].toJSON();
         })(),
+        averageScore: this.neat.getAverage(),
+        generation: this.neat.generation,
+        bestScore: this.neat.population[0].score,
       });
       this.endEvaluation();
     }

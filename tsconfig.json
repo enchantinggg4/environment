@@ -17,9 +17,15 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
+    "rootDirs": [
+      "src",
+      "shared"
+    ],
+    "baseUrl": ".",
     "jsx": "react"
   },
   "include": [
-    "src"
+    "src",
+    "shared"
   ]
 }

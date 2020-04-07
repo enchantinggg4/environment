@@ -1,6 +1,7 @@
-import Environment from "./env/Environment";
-import sleep from "./env/util/sleep";
-import EvolutionEnvironment from "./evolution-env/EvolutionEnvironment";
+// @ts-ignore
+import Environment from "src/shared/env/Environment";
+import EvolutionEnvironment from "src/shared/evolution-env/EvolutionEnvironment";
+import sleep from "src/shared/env/util/sleep";
 
 // @ts-ignore
 self.window = self;
@@ -19,6 +20,7 @@ ctx.addEventListener("message", (e) => {
 });
 
 let lastRender = new Date().getTime();
+const simsStarted = lastRender;
 const runner = (async () => {
   let iteration = 0;
   while (true) {
@@ -32,10 +34,18 @@ const runner = (async () => {
           items: env.serializePlayers(),
         });
       }
+      await sleep(0);
+    }
+
+    if (iteration % 1000 === 0) {
+      console.log(
+        `Simulation frameRate is ${
+          iteration / ((new Date().getTime() - simsStarted) / 1000)
+        }`
+      );
     }
 
     iteration++;
     env.performTurn(ctx);
-    await sleep(0);
   }
 })();

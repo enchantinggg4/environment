@@ -2,8 +2,9 @@ import Environment from "../Environment";
 import Vector from "../util/Vector";
 
 export default abstract class Player<T extends Environment> {
-  x: number = 0;
-  y: number = 0;
+  abstract x: number;
+  abstract y: number;
+  abstract radius: number;
 
   abstract get json(): any
   public get location(): Vector {

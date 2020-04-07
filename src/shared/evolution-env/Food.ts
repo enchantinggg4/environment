@@ -1,9 +1,10 @@
 import Player from "../env/player/Player";
 import EvolutionEnvironment from "./EvolutionEnvironment";
-import { IRenderable } from "../render/Render";
-import P5 from "p5";
 export default class Food extends Player<EvolutionEnvironment> {
   alive: boolean = true;
+  radius = 5;
+  x = 0;
+  y = 0;
 
   get json(): any {
     return {
@@ -17,18 +18,4 @@ export default class Food extends Player<EvolutionEnvironment> {
   update(env: EvolutionEnvironment): void {}
 }
 
-export class FoodRenderable implements IRenderable {
-  x: number = 0;
-  y: number = 0;
-  alive: boolean = true;
 
-  constructor(p: any) {
-    Object.assign(this, p);
-  }
-  render(p5: P5): void {
-    if (this.alive) {
-      p5.fill("yellow");
-      p5.ellipse(this.x, this.y, 5);
-    }
-  }
-}
