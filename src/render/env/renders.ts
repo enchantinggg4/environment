@@ -1,10 +1,8 @@
-
-import {IRenderable} from "../Render";
-import P5 from "p5"
+import P5 from "p5";
 import EvolutionEnvironment from "src/shared/evolution-env/EvolutionEnvironment";
 import Vector from "src/shared/env/util/Vector";
 import TestPlayer from "src/shared/evolution-env/TestPlayer";
-
+import { IRenderable } from "../renders/ItemRenderer";
 
 export class TestPlayerRenderable implements IRenderable {
   x: number = 0;
@@ -20,30 +18,31 @@ export class TestPlayerRenderable implements IRenderable {
   }
 
   private drawFoodInputs(p5: P5) {
-    // console.log(this.inputs)
-    for (let i = 0; i < EvolutionEnvironment.INPUT_FOOD_COUNT; i++) {
-      p5.stroke("yellow");
+    const side = Math.sqrt(EvolutionEnvironment.INPUT_COUNT);
 
-      if (this.inputs[i * 2] === 0 && this.inputs[i * 2 + 1] === 0) continue;
-      const angle = this.inputs[i * 2 + 1] * 2 * Math.PI;
-      const addVector = new Vector(Math.cos(angle), Math.sin(angle)).mult(
-        (1 - this.inputs[i * 2]) * this.viewDistance
-      );
-      // console.log(angle);
-      p5.line(this.x, this.y, this.x + addVector.x, this.y + addVector.y);
+    const heatmap = this.inputs;
+    p5.loadPixels();
+
+    const intX = Math.round(this.x);
+    const intY = Math.round(this.y);
+
+    for (let y = 0; y < side; y++) {
+      for (let x = 0; x < side; x++) {
+        const realX = intX - side / 2 + x;
+        const realY = intY - side / 2 + y;
+
+        const hmv = heatmap[x + y * side];
+
+        const index = (realX + realY * p5.width) * 4;
+
+        p5.pixels[index] = 255 * hmv;
+        p5.pixels[index + 1] = 255 * hmv;
+        p5.pixels[index + 2] = 255 * hmv;
+        p5.pixels[index + 3] = 255;
+      }
     }
-  }
 
-  private drawPlayerInputs(p5: P5) {
-    if (this.inputs[2] === -1) return;
-
-    p5.stroke("red");
-    p5.line(
-      this.x,
-      this.y,
-      this.x + this.inputs[2] * this.viewDistance,
-      this.y + this.inputs[3] * this.viewDistance
-    );
+    p5.updatePixels();
   }
 
   private drawDecision(p5: P5) {
@@ -51,7 +50,7 @@ export class TestPlayerRenderable implements IRenderable {
     const decisionVector = new Vector(
       Math.cos(this.outputs[0] * Math.PI * 2),
       Math.sin(this.outputs[0] * Math.PI * 2)
-    ).mult(this.outputs[0] * this.viewDistance / 3);
+    ).mult((this.outputs[0] * this.viewDistance) / 3);
     p5.line(
       this.x,
       this.y,
@@ -61,16 +60,16 @@ export class TestPlayerRenderable implements IRenderable {
   }
 
   render(p5: P5): void {
-    p5.stroke("white");
-    // p5.noFill();
-    p5.noStroke();
-    // p5.ellipse(this.x, this.y, this.viewDistance * 2);
-
-    if (this.elite) p5.fill("red");
-    else p5.fill("green");
-    p5.circle(this.x, this.y, TestPlayer.RADIUS * 2);
     this.drawFoodInputs(p5);
-    this.drawDecision(p5);
+    // p5.stroke("white");
+    // // p5.noFill();
+    // p5.noStroke();
+    // // p5.ellipse(this.x, this.y, this.viewDistance * 2);
+    //
+    // if (this.elite) p5.fill("red");
+    // else p5.fill("green");
+    // p5.circle(this.x, this.y, TestPlayer.RADIUS * 2);
+    // this.drawDecision(p5);
     // this.drawPlayerInputs(p5);
   }
 }

@@ -1,30 +1,57 @@
 import Environment from "../env/Environment";
 import TestPlayer from "./TestPlayer";
-import { Neat, architect, methods } from "neataptic";
+import { architect, methods, Neat } from "neataptic";
 import Food from "./Food";
 import Player from "../env/player/Player";
 import { Postable } from "./Postable";
+import generateHeatMap from "../env/util/generateHeatMap";
+import measureTime from "../env/util/measureTime";
+import Vector from "../env/util/Vector";
 
 export default class EvolutionEnvironment extends Environment {
-  static WIDTH = 1600;
-  static HEIGHT = 1600;
+  static WIDTH = 100;
+  static HEIGHT = 100;
   static INPUT_FOOD_COUNT = 1;
-  static INPUT_COUNT = EvolutionEnvironment.INPUT_FOOD_COUNT * 2;
-  static POP_SIZE = 50;
+  // static INPUT_COUNT = EvolutionEnvironment.INPUT_FOOD_COUNT * 2;
+  // static INPUT_COUNT = 40 * 40;
+  static INPUT_COUNT = EvolutionEnvironment.WIDTH * EvolutionEnvironment.HEIGHT;
+  static POP_SIZE = 1;
   static OUTPUT_COUNT = 2;
   static ITERS = 1000;
 
-  static FOOD_PER_PLAYER = 10;
+  static FOOD_PER_PLAYER = 1;
 
   private _players: TestPlayer[] = [];
   private _foods: Food[] = [];
 
+  public heatmap: (foods: Vector[], offsetX: number, offsetY: number) => any;
   public get foods(): Food[] {
     return this._foods.filter((it) => it.alive);
   }
 
   public get players(): TestPlayer[] {
     return this._players;
+  }
+
+  constructor() {
+    super();
+    const side = Math.round(Math.sqrt(EvolutionEnvironment.INPUT_COUNT));
+    this.heatmap = generateHeatMap(
+      EvolutionEnvironment.WIDTH,
+      EvolutionEnvironment.HEIGHT,
+      side,
+      side
+    );
+  }
+
+  public getInputs(x: number, y: number) {
+    const side = Math.round(Math.sqrt(EvolutionEnvironment.INPUT_COUNT));
+
+    return this.heatmap(
+      this.foods.map((it) => it.location),
+      Math.round(x) - side / 2,
+      Math.round(y) - side / 2
+    );
   }
 
   private iteration: number = 0;

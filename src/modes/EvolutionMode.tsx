@@ -1,16 +1,14 @@
 import React, { FC, useEffect, useRef, useState } from "react";
-import "./App.css";
-import Render from "./render/Render";
+import "../App.css";
 import { Graph } from "react-d3-graph";
 /* eslint import/no-webpack-loader-syntax:0 */
 // @ts-ignore
-import worker from "workerize-loader?inline!./worker";
-import {
-  WebsocketMessageListener,
-  WorkerMessageListener,
-} from "./render/MessageListener";
+import worker from "workerize-loader?inline!../worker";
+
 import { LineChart, Line, CartesianGrid, XAxis, YAxis } from "recharts";
 import { observer, useLocalStore } from "mobx-react";
+import {WebsocketMessageListener, WorkerMessageListener} from "../render/MessageListener";
+import ItemRenderer from "../render/renders/ItemRenderer";
 
 // Attach an event listener to receive calculations from your worker
 
@@ -30,7 +28,7 @@ const App: FC = () => {
     links: [],
   });
   const [generation, setGeneration] = useState(0);
-  const [render, setRender] = useState<Render | null>(null);
+  const [render, setRender] = useState<ItemRenderer | null>(null);
   const [headless, setHeadless] = useState(false);
 
   const handleGenerationFinished = (e: any) => {
@@ -61,9 +59,10 @@ const App: FC = () => {
 
   useEffect(() => {
     if (ref.current && !render) {
-      const r = new Render(ref.current);
+      const r = new ItemRenderer(ref.current);
 
       const useWorker = true;
+
 
       if (useWorker) {
         const workerInstance = worker();
@@ -85,47 +84,47 @@ const App: FC = () => {
 
   return (
     <div className="App">
-      <button
-        onClick={() => {
-          setHeadless(!headless);
-          if (headless && render) {
-            render.consume([]);
-          }
-          if (wrk)
-            wrk.postMessage({
-              headless: !headless,
-            });
-        }}
-      >
-        {headless ? "Turn off" : "Turn on"} headless
-      </button>
+      {/*<button*/}
+      {/*  onClick={() => {*/}
+      {/*    setHeadless(!headless);*/}
+      {/*    if (headless && render) {*/}
+      {/*      render.consume([]);*/}
+      {/*    }*/}
+      {/*    if (wrk)*/}
+      {/*      wrk.postMessage({*/}
+      {/*        headless: !headless,*/}
+      {/*      });*/}
+      {/*  }}*/}
+      {/*>*/}
+      {/*  {headless ? "Turn off" : "Turn on"} headless*/}
+      {/*</button>*/}
       <div ref={ref} />
-      <h1>Generation {generation}</h1>
-      <LineChart width={1200} height={600} data={data}>
-        <Line isAnimationActive={false} type="monotone" dataKey="best" stroke="red" />
-        <Line isAnimationActive={false} type="monotone" dataKey="average" stroke="#8884d8" />
-        <CartesianGrid stroke="#ccc" />
-        <XAxis dataKey="name" />
-        <YAxis />
-      </LineChart>
-      <Graph
-        id="graph-id" // id is mandatory, if no id is defined rd3g will throw an error
-        data={network}
-        config={{
-          nodeHighlightBehavior: true,
-          directed: true,
-          node: {
-            color: "lightgreen",
-            size: 120,
-            highlightStrokeColor: "blue",
-            labelProperty: "label",
-          },
-          link: {
-            highlightColor: "lightblue",
-            labelProperty: "label",
-          },
-        }}
-      />
+      {/*<h1>Generation {generation}</h1>*/}
+      {/*<LineChart width={1200} height={600} data={data}>*/}
+      {/*  <Line isAnimationActive={false} type="monotone" dataKey="best" stroke="red" />*/}
+      {/*  <Line isAnimationActive={false} type="monotone" dataKey="average" stroke="#8884d8" />*/}
+      {/*  <CartesianGrid stroke="#ccc" />*/}
+      {/*  <XAxis dataKey="name" />*/}
+      {/*  <YAxis />*/}
+      {/*</LineChart>*/}
+      {/*<Graph*/}
+      {/*  id="graph-id" // id is mandatory, if no id is defined rd3g will throw an error*/}
+      {/*  data={network}*/}
+      {/*  config={{*/}
+      {/*    nodeHighlightBehavior: true,*/}
+      {/*    directed: true,*/}
+      {/*    node: {*/}
+      {/*      color: "lightgreen",*/}
+      {/*      size: 120,*/}
+      {/*      highlightStrokeColor: "blue",*/}
+      {/*      labelProperty: "label",*/}
+      {/*    },*/}
+      {/*    link: {*/}
+      {/*      highlightColor: "lightblue",*/}
+      {/*      labelProperty: "label",*/}
+      {/*    },*/}
+      {/*  }}*/}
+      {/*/>*/}
     </div>
   );
 };

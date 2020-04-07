@@ -47,5 +47,6 @@ const runner = (async () => {
 
     iteration++;
     env.performTurn(ctx);
+    await sleep(1000);
   }
 })();

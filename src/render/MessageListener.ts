@@ -1,9 +1,5 @@
-
 import MessageConsumer from "./MessageConsumer";
-import {FoodRenderable, TestPlayerRenderable} from "./env/renders";
-
-
-
+import { FoodRenderable, TestPlayerRenderable } from "./env/renders";
 
 export default abstract class MessageListener {
   abstract onMessageData(e: { items: any[] }): void;
@@ -14,6 +10,7 @@ export class WorkerMessageListener extends MessageListener {
     super();
     worker.addEventListener("message", (e: any) => {
       if (e.data.type === "items") {
+        // console.table(e.data.items[0].inputs);
         consumer.consume(
           e.data.items.map((it: any) => {
             if (it.type === "FOOD") {
@@ -36,6 +33,7 @@ export class WebsocketMessageListener extends MessageListener {
     socket.addEventListener("message", (e) => {
       const data = JSON.parse(e.data);
       if (data.type === "items") {
+        // console.log(data);
         consumer.consume(
           data.items.map((it: any) => {
             if (it.type === "FOOD") {

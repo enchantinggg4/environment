@@ -3,6 +3,7 @@ import EvolutionEnvironment from "./EvolutionEnvironment";
 import { Network } from "neataptic";
 import view from "../env/util/view";
 import measureTime from "../env/util/measureTime";
+import Vector from "../env/util/Vector";
 export default class TestPlayer extends Player<EvolutionEnvironment> {
   static RADIUS = 5;
   static SPEED = 1;
@@ -23,20 +24,23 @@ export default class TestPlayer extends Player<EvolutionEnvironment> {
   }
 
   update(env: EvolutionEnvironment): void {
-    this.calcInputs(env);
-    const output = this.activate(this.brain.activate(this.inputs));
-    // const output = this.brain.activate(this.inputs);
-    this.outputs = output;
-
-    const angle = output[0] * (Math.PI * 2);
-    const distance = output[1]; // output[1] > 1 ? 1 : output[1] < 0 ? 0 : output[1];
-
-    const dX = distance * Math.cos(angle) * TestPlayer.SPEED;
-    const dY = distance * Math.sin(angle) * TestPlayer.SPEED;
-
-    this.x += dX;
-    this.y += dY;
-    this.checkFood(env);
+    // this.calcInputs(env);
+    this.x = EvolutionEnvironment.WIDTH / 2;
+    this.y = EvolutionEnvironment.HEIGHT / 2;
+    measureTime("Getting inputs", () => this.getInputs(env));
+    // const output = this.activate(this.brain.activate(this.inputs));
+    // // const output = this.brain.activate(this.inputs);
+    // this.outputs = output;
+    //
+    // const angle = output[0] * (Math.PI * 2);
+    // const distance = output[1]; // output[1] > 1 ? 1 : output[1] < 0 ? 0 : output[1];
+    //
+    // const dX = distance * Math.cos(angle) * TestPlayer.SPEED;
+    // const dY = distance * Math.sin(angle) * TestPlayer.SPEED;
+    //
+    // this.x += dX;
+    // this.y += dY;
+    // this.checkFood(env);
     // this.checkCollision(env);
   }
 
@@ -73,6 +77,18 @@ export default class TestPlayer extends Player<EvolutionEnvironment> {
       closestFood.alive = false;
       this.brain.score++;
     }
+  }
+
+  private getInputs(env: EvolutionEnvironment) {
+    // this.inputs = env.getInputs(Math.round(this.x), Math.round(this.y));
+    const side = Math.round(Math.sqrt(EvolutionEnvironment.INPUT_COUNT));
+    const matrix: number[][] = env.getInputs(this.x, this.y);
+
+    this.inputs = [];
+    matrix.forEach((row) => {
+      row.forEach((it) => this.inputs.push(it));
+    });
+    // console.table(matrix);
   }
 
   /**
