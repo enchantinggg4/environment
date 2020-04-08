@@ -3,8 +3,6 @@ import "../App.css";
 import { Graph } from "react-d3-graph";
 /* eslint import/no-webpack-loader-syntax:0 */
 // @ts-ignore
-// import worker from "workerize-loader?inline!../shared/neat-env/worker";
-import WorkerInst from "worker-loader?name=dist/[name].js!../shared/neat-env/worker";
 
 import { LineChart, Line, CartesianGrid, XAxis, YAxis } from "recharts";
 import { observer, useLocalStore } from "mobx-react";
@@ -61,7 +59,8 @@ const App: FC = () => {
 
 
       if (useWorker) {
-        const workerInstance = new WorkerInst();
+        // const workerInstance = new WorkerInst();
+        const workerInstance = new Worker('../shared/neat-env/worker', { name: 'worker', type: 'module' });
         setWorker(workerInstance);
         new WorkerMessageListener(workerInstance, r);
 
