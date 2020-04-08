@@ -1,6 +1,6 @@
 import P5 from "p5";
 import RenderableConsumer from "../MessageConsumer";
-import EvolutionEnvironment from "../../shared/evolution-env/EvolutionEnvironment";
+import EvolutionEnvironment from "../../shared/neat-env/EvolutionEnvironment";
 
 export interface IRenderable {
   render(p5: P5): void;
@@ -11,6 +11,7 @@ export default class ItemRenderer extends P5 implements RenderableConsumer {
   private cx = 0;
   private cy = 0;
   private zoom = 1;
+  headless: boolean = false;
 
   consume(items: IRenderable[]): void {
     this.items = items;
@@ -28,6 +29,7 @@ export default class ItemRenderer extends P5 implements RenderableConsumer {
 
   draw = () => {
     // this.checkDrag();
+    if (this.headless) return;
     this.background(0, 0, 0);
     this.items.forEach((it: IRenderable) => it.render(this));
   };

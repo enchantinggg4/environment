@@ -1,12 +1,13 @@
 import P5 from "p5";
-import generateHeatMap from "../../shared/env/util/generateHeatMap";
-import Vector from "../../shared/env/util/Vector";
+import Vector from "../../shared/base/util/Vector";
+import generateHeatMap from "../../shared/base/util/generateHeatMap";
 
 export default class HeatmapRenderer extends P5 {
   private generator!: (
     vecs: Vector[],
     offsetX: number,
-    offsetY: number
+    offsetY: number,
+    gradientFactor: number
   ) => number[][];
 
   private items: Vector[] = [];
@@ -17,11 +18,11 @@ export default class HeatmapRenderer extends P5 {
   setup = () => {
     this.createCanvas(300, 300);
     this.generator = generateHeatMap(this.width, this.height);
-    this.pixelDensity(1)
+    this.pixelDensity(1);
   };
 
   renderHeatmap() {
-    const heatmap = this.generator(this.items, 0, 0);
+    const heatmap = this.generator(this.items, 0, 0, 1000);
 
     this.loadPixels();
 

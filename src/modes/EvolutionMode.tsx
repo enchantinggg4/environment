@@ -3,7 +3,8 @@ import "../App.css";
 import { Graph } from "react-d3-graph";
 /* eslint import/no-webpack-loader-syntax:0 */
 // @ts-ignore
-import worker from "workerize-loader?inline!../worker";
+// import worker from "workerize-loader?inline!../shared/neat-env/worker";
+import WorkerInst from "worker-loader?name=dist/[name].js!../shared/neat-env/worker";
 
 import { LineChart, Line, CartesianGrid, XAxis, YAxis } from "recharts";
 import { observer, useLocalStore } from "mobx-react";
@@ -27,33 +28,28 @@ const App: FC = () => {
     nodes: [{ id: "Harry" }],
     links: [],
   });
-  const [generation, setGeneration] = useState(0);
+  const [generation, setGeneration] = useState("0");
   const [render, setRender] = useState<ItemRenderer | null>(null);
   const [headless, setHeadless] = useState(false);
 
   const handleGenerationFinished = (e: any) => {
     if (e.data.type === "generationFinished") {
-      const example: any = e.data.best;
-      const formatted = {
-        nodes: example.nodes.map((it: any, index: number) => {
-          return {
-            id: it.index,
-            label: `${it.type} ${it.bias}`,
-          };
-        }),
-        links: example.connections.map((it: any) => ({
-          source: it.from,
-          target: it.to,
-          label: it.weight,
-        })),
-      };
-      setNetwork(formatted);
-      setGeneration(e.data.generation);
-      stats.push({
-        average: e.data.averageScore,
-        best: e.data.bestScore,
-        page: "Stats",
-      });
+      // const example: any = e.data.best;
+      // const formatted = {
+      //   nodes: example.nodes.map((it: any, index: number) => {
+      //     return {
+      //       id: it.index,
+      //       label: `${it.type} ${it.bias}`,
+      //     };
+      //   }),
+      //   links: example.connections.map((it: any) => ({
+      //     source: it.from,
+      //     target: it.to,
+      //     label: it.weight,
+      //   })),
+      // };
+      // setNetwork(formatted);
+      setGeneration(`Generation ${e.data.generation}, best ${e.data.bestScore}, avrg ${e.data.averageScore}`);
     }
   };
 
@@ -65,7 +61,7 @@ const App: FC = () => {
 
 
       if (useWorker) {
-        const workerInstance = worker();
+        const workerInstance = new WorkerInst();
         setWorker(workerInstance);
         new WorkerMessageListener(workerInstance, r);
 
@@ -84,22 +80,22 @@ const App: FC = () => {
 
   return (
     <div className="App">
-      {/*<button*/}
-      {/*  onClick={() => {*/}
-      {/*    setHeadless(!headless);*/}
-      {/*    if (headless && render) {*/}
-      {/*      render.consume([]);*/}
-      {/*    }*/}
-      {/*    if (wrk)*/}
-      {/*      wrk.postMessage({*/}
-      {/*        headless: !headless,*/}
-      {/*      });*/}
-      {/*  }}*/}
-      {/*>*/}
-      {/*  {headless ? "Turn off" : "Turn on"} headless*/}
-      {/*</button>*/}
+      <button
+        onClick={() => {
+          if ( render) {
+            render.headless = !headless
+          }
+          setHeadless(!headless);
+          if (wrk)
+            wrk.postMessage({
+              headless: !headless,
+            });
+        }}
+      >
+        {headless ? "Turn off" : "Turn on"} headless
+      </button>
       <div ref={ref} />
-      {/*<h1>Generation {generation}</h1>*/}
+      <h1>Generation {generation}</h1>
       {/*<LineChart width={1200} height={600} data={data}>*/}
       {/*  <Line isAnimationActive={false} type="monotone" dataKey="best" stroke="red" />*/}
       {/*  <Line isAnimationActive={false} type="monotone" dataKey="average" stroke="#8884d8" />*/}

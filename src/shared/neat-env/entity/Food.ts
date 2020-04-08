@@ -1,5 +1,6 @@
-import Player from "../env/player/Player";
-import EvolutionEnvironment from "./EvolutionEnvironment";
+import Player from "../../base/player/Player";
+import EvolutionEnvironment from "../EvolutionEnvironment";
+
 export default class Food extends Player<EvolutionEnvironment> {
   alive: boolean = true;
   radius = 5;

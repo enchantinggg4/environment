@@ -1,5 +1,6 @@
 import MessageConsumer from "./MessageConsumer";
-import { FoodRenderable, TestPlayerRenderable } from "./env/renders";
+import {FoodRenderable, TestPlayerRenderable} from "../shared/neat-env/renders";
+
 
 export default abstract class MessageListener {
   abstract onMessageData(e: { items: any[] }): void;

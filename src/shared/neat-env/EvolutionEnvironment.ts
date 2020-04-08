@@ -1,30 +1,25 @@
-import Environment from "../env/Environment";
-import TestPlayer from "./TestPlayer";
-import { architect, methods, Neat } from "neataptic";
-import Food from "./Food";
-import Player from "../env/player/Player";
-import { Postable } from "./Postable";
-import generateHeatMap from "../env/util/generateHeatMap";
-import measureTime from "../env/util/measureTime";
-import Vector from "../env/util/Vector";
+import Environment from "../base/Environment";
+import TestPlayer from "./entity/TestPlayer";
+import Food from "./entity/Food";
+import {architect, methods, Neat} from "neataptic";
+import {Postable} from "./Postable";
+import Player from "../base/player/Player";
+
 
 export default class EvolutionEnvironment extends Environment {
-  static WIDTH = 100;
-  static HEIGHT = 100;
-  static INPUT_FOOD_COUNT = 1;
-  // static INPUT_COUNT = EvolutionEnvironment.INPUT_FOOD_COUNT * 2;
-  // static INPUT_COUNT = 40 * 40;
-  static INPUT_COUNT = EvolutionEnvironment.WIDTH * EvolutionEnvironment.HEIGHT;
-  static POP_SIZE = 1;
+  static WIDTH = 1200;
+  static HEIGHT = 800;
+  static INPUT_FOOD_COUNT = 3;
+  static INPUT_COUNT = EvolutionEnvironment.INPUT_FOOD_COUNT * 2;
+  static POP_SIZE = 50;
   static OUTPUT_COUNT = 2;
-  static ITERS = 1000;
+  static TIMEOUT_ITERS = 10000;
 
-  static FOOD_PER_PLAYER = 1;
+  static FOOD_PER_PLAYER = 3;
 
   private _players: TestPlayer[] = [];
   private _foods: Food[] = [];
 
-  public heatmap: (foods: Vector[], offsetX: number, offsetY: number) => any;
   public get foods(): Food[] {
     return this._foods.filter((it) => it.alive);
   }
@@ -35,23 +30,6 @@ export default class EvolutionEnvironment extends Environment {
 
   constructor() {
     super();
-    const side = Math.round(Math.sqrt(EvolutionEnvironment.INPUT_COUNT));
-    this.heatmap = generateHeatMap(
-      EvolutionEnvironment.WIDTH,
-      EvolutionEnvironment.HEIGHT,
-      side,
-      side
-    );
-  }
-
-  public getInputs(x: number, y: number) {
-    const side = Math.round(Math.sqrt(EvolutionEnvironment.INPUT_COUNT));
-
-    return this.heatmap(
-      this.foods.map((it) => it.location),
-      Math.round(x) - side / 2,
-      Math.round(y) - side / 2
-    );
   }
 
   private iteration: number = 0;
@@ -166,7 +144,8 @@ export default class EvolutionEnvironment extends Environment {
       it.update(this);
     }
 
-    if (this.iteration === EvolutionEnvironment.ITERS) {
+    // if (this.foods.length === EvolutionEnvironment.ITERS) {
+    if (this.foods.length === 0 || this.iteration === EvolutionEnvironment.TIMEOUT_ITERS) {
       this.iteration = 0;
       ctx.postMessage({
         type: "generationFinished",

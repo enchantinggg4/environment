@@ -1,4 +1,4 @@
-import {Postable} from "../evolution-env/Postable";
+import { Postable } from "../neat-env/Postable";
 
 export default abstract class Environment {
   public lastUpdate: number = new Date().getMilliseconds();
@@ -7,7 +7,7 @@ export default abstract class Environment {
 
   abstract turn(ctx: Postable): void;
 
-  abstract serializePlayers(): any[]
+  abstract serializePlayers(): any[];
 
   performTurn(ctx: Postable) {
     this.turn(ctx);

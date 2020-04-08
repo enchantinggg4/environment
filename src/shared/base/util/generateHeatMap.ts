@@ -31,7 +31,8 @@ export default (
       sliceW: number,
       sliceH: number,
       offsetX: number,
-      offsetY: number
+      offsetY: number,
+      gradientFactor: number
     ) {
       const sqrD = Math.sqrt(w * w + h * h);
       let avrgDist = 0;
@@ -41,15 +42,15 @@ export default (
         const diffX = this.thread.x + offsetX - pX;
         const diffY = this.thread.y!! + offsetY - pY;
 
-        avrgDist += Math.sqrt(diffX * diffX + diffY * diffY);
+        avrgDist += gradientFactor / Math.sqrt(diffX * diffX + diffY * diffY);
       }
-      avrgDist /= points;
-      return 1 - avrgDist / sqrD;
+      avrgDist = Math.min(sqrD, avrgDist);
+      return avrgDist / sqrD;
     })
     .setOutput([sliceW, sliceH])
     .setDynamicArguments(true);
 
-  return (vecs: Vector[], offsetX: number, offsetY: number): number[][] => {
+  return (vecs: Vector[], offsetX: number, offsetY: number, gradientFactor: number = 1000): number[][] => {
     if (vecs.length === 0) return generatedEmptyMatrix;
     const matrix = vecs.map((it) => [it.x, it.y]);
     return kern(
@@ -60,7 +61,8 @@ export default (
       sliceW,
       sliceH,
       offsetX,
-      offsetY
+      offsetY,
+      gradientFactor
     ) as any;
   };
 };

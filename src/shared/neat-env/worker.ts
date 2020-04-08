@@ -1,7 +1,7 @@
 // @ts-ignore
 import Environment from "src/shared/env/Environment";
-import EvolutionEnvironment from "src/shared/evolution-env/EvolutionEnvironment";
-import sleep from "src/shared/env/util/sleep";
+import EvolutionEnvironment from "./EvolutionEnvironment";
+import sleep from "../base/util/sleep";
 
 // @ts-ignore
 self.window = self;
@@ -47,6 +47,6 @@ const runner = (async () => {
 
     iteration++;
     env.performTurn(ctx);
-    await sleep(1000);
+    // await sleep(100);
   }
 })();
