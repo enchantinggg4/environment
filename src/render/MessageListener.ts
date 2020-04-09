@@ -1,5 +1,6 @@
 import MessageConsumer from "./MessageConsumer";
 import {FoodRenderable, TestPlayerRenderable} from "../shared/neat-env/renders";
+import {CellRenderable, GridRenderable} from "../shared/cell-env/renders";
 
 
 export default abstract class MessageListener {
@@ -16,6 +17,10 @@ export class WorkerMessageListener extends MessageListener {
           e.data.items.map((it: any) => {
             if (it.type === "FOOD") {
               return new FoodRenderable(it);
+            } else if(it.type === "CELL") {
+              return new CellRenderable(it);
+            } else if(it.type === "GRID") {
+              return new GridRenderable(it);
             } else {
               return new TestPlayerRenderable(it);
             }

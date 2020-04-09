@@ -1,6 +1,14 @@
 export default class Vector {
   constructor(public x: number, public y: number) {}
 
+  static Random(): Vector {
+    return new Vector(Math.random() - 0.5, Math.random() - 0.5).normalize();
+  }
+
+  equals(v: Vector){
+    return this.x === v.x && this.y === v.y
+  }
+
   add(v: Vector) {
     this.x += v.x;
     this.y += v.y;

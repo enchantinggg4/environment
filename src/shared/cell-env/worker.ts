@@ -1,7 +1,7 @@
 // @ts-ignore
 import Environment from "src/shared/env/Environment";
 import sleep from "../base/util/sleep";
-import TargetEnvironment from "./TargetEnvironment";
+import CellEnvironment from "./CellEnvironment";
 
 // // @ts-ignore
 // self.window = self;
@@ -9,7 +9,7 @@ import TargetEnvironment from "./TargetEnvironment";
 // const ctx: Worker = self as any;
 
 // replace this with your environment implementation
-const env: Environment = new TargetEnvironment();
+const env: Environment = new CellEnvironment();
 env.init();
 
 let headless = false;
@@ -53,6 +53,6 @@ const runner = (async () => {
 
     iteration++;
     env.performTurn(ctx);
-    // await sleep(1);
+    // await sleep(100);
   }
 })();

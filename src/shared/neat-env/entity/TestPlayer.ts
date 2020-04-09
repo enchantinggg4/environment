@@ -39,30 +39,11 @@ export default class TestPlayer extends Player<EvolutionEnvironment> {
     this.y += dY;
     this.checkFood(env, shouldEat);
     // this.checkCollision(env);
+    //
   }
 
   private activate(output: number[]) {
     return output.map((it) => 1 / (1 + Math.exp(-it * 4)));
-  }
-
-  /**
-   * kinda good
-   * @param env
-   */
-  private checkCollision(env: EvolutionEnvironment) {
-    env.players.forEach((it) => {
-      if (
-        it !== this &&
-        it.location.distance(this.location) < TestPlayer.RADIUS * 2
-      ) {
-        const newLoc = it.location
-          .sub(this.location)
-          .normalize()
-          .mult(TestPlayer.RADIUS * 2);
-        this.x = it.location.x - newLoc.x;
-        this.y = it.location.y - newLoc.y;
-      }
-    });
   }
 
   private checkFood(env: EvolutionEnvironment, shouldEat: boolean) {

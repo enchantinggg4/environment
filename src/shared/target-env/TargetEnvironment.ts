@@ -4,6 +4,7 @@ import { architect, methods, Neat } from "neataptic";
 import Target from "./entity/Target";
 import TargetSeeker from "./entity/TargetSeeker";
 import Player from "../base/player/Player";
+import Cell from "../cell-env/entity/Cell";
 
 export default class TargetEnvironment extends Environment {
   static INPUT_COUNT = 2;
@@ -142,4 +143,6 @@ export default class TargetEnvironment extends Environment {
     const p: Player<TargetEnvironment>[] = [this.target].concat(this.players);
     return p.map((it) => it.json);
   }
+
+
 }

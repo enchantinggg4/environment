@@ -11,7 +11,13 @@ export default abstract class Player<T extends Environment> {
     return new Vector(this.x, this.y);
   }
 
+  public set location(v: Vector) {
+    this.x = v.x;
+    this.y = v.y;
+  }
+
   abstract update(env: T): void;
+
 }
 interface IUpdatable<T extends Environment> {
 

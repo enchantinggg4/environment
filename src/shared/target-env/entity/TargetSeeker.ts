@@ -3,6 +3,7 @@ import TargetEnvironment from "../TargetEnvironment";
 import { Network } from "neataptic";
 import Vector from "../../base/util/Vector";
 import EvolutionEnvironment from "../../neat-env/EvolutionEnvironment";
+import collision from "../../base/util/collision";
 
 export default class TargetSeeker extends Player<TargetEnvironment> {
   radius: number = 8;
@@ -46,23 +47,6 @@ export default class TargetSeeker extends Player<TargetEnvironment> {
     this.inputs = inputs;
   }
 
-  private checkCollision(env: TargetEnvironment) {
-    env.players.forEach((it) => {
-      if (
-        it !== this &&
-        it.location.distance(this.location) < this.radius * 2
-      ) {
-        const newLoc = it.location
-          .sub(this.location)
-          .normalize()
-          .mult(this.radius * 2);
-        this.x = it.location.x - newLoc.x;
-        this.y = it.location.y - newLoc.y;
-      }
-    });
-  }
-
-
   update(env: TargetEnvironment): void {
     this.calcInputs(env);
     const output = this.brain.activate(this.inputs);
@@ -83,6 +67,6 @@ export default class TargetSeeker extends Player<TargetEnvironment> {
     const sc = isNaN(score) ? 0 : isFinite(score) ? 1 - score : 0;
     this.brain.score += sc;
 
-    this.checkCollision(env);
+    collision(this, env.players, this.radius);
   }
 }
