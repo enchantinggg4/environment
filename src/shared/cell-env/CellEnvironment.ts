@@ -8,8 +8,14 @@ import snap from "../base/util/snap";
 import edge, { edgeVector } from "../base/util/edge";
 
 export default class CellEnvironment extends Environment {
+  static adjMatrix = [
+    new Vector(1, 0), // right
+    new Vector(0, 1), // bottom
+    new Vector(-1, 0), // left
+    new Vector(0, -1), // top
+  ];
   // 4 neighbours * 2 + energy + height
-  static INPUT_COUNT = 4 * 2 + 1 + 1;
+  static INPUT_COUNT = CellEnvironment.adjMatrix.length * 2 + 1 + 1;
   static OUTPUT_COUNT = 2;
 
   static SCALE = 10;
@@ -17,7 +23,8 @@ export default class CellEnvironment extends Environment {
   static WIDTH = 100;
   static HEIGHT = 80;
 
-  static POP_SIZE = 59;
+  static POP_SIZE = 100;
+  // static POP_SIZE = 1;
 
   public players: Cell[] = [];
   private iteration: number = 0;
@@ -44,6 +51,10 @@ export default class CellEnvironment extends Environment {
 
   constructor() {
     super();
+  }
+
+  init(basePop: Cell[] = []): void {
+    this.grid = [];
     for (let y = 0; y < CellEnvironment.HEIGHT; y++) {
       const row = [];
       for (let x = 0; x < CellEnvironment.WIDTH; x++) {
@@ -51,9 +62,6 @@ export default class CellEnvironment extends Environment {
       }
       this.grid.push(row);
     }
-  }
-
-  init(basePop: Cell[] = []): void {
     this.players = new Array(CellEnvironment.POP_SIZE).fill(null).map(() => {
       const brain = architect.Random(
         CellEnvironment.INPUT_COUNT,
@@ -62,7 +70,9 @@ export default class CellEnvironment extends Environment {
       );
       const p = new Cell(this, brain);
       p.x = Math.floor(Math.random() * CellEnvironment.WIDTH);
+      // p.x = 0
       p.y = Math.floor(Math.random() * CellEnvironment.HEIGHT);
+      // p.y = 0
       p.energy = Cell.MAX_ENERGY;
       this.put(p.location, p);
       return p;
@@ -86,6 +96,10 @@ export default class CellEnvironment extends Environment {
       it.update(this);
       it.location = snap(it.location, 1, 1);
     }
+
+    if (!this.players.find((it) => it.alive)) {
+      this.init();
+    }
   }
 
   serializePlayers(): any[] {
@@ -95,18 +109,12 @@ export default class CellEnvironment extends Environment {
   }
 
   getAdjacentCells(param: Cell): (Cell | null)[] {
-    const adjMatrix = [
-      new Vector(1, 0), // right
-      new Vector(0, 1), // bottom
-      new Vector(-1, 0), // left
-      new Vector(0, -1), // top
-    ];
-    return adjMatrix
+    return CellEnvironment.adjMatrix
       .map((it) =>
         edgeVector(
           CellEnvironment.WIDTH - 1,
           CellEnvironment.HEIGHT - 1,
-          it.mult(param.radius * 2).add(param.location)
+          it.copy().add(param.location)
         )
       )
       .map((it) => this.get(it));

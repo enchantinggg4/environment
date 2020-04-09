@@ -43,7 +43,7 @@ const runner = (async () => {
       await sleep(0);
     }
 
-    if (iteration % 1000 === 0) {
+    if (iteration % 10000 === 0) {
       console.log(
         `Simulation frameRate is ${
           iteration / ((new Date().getTime() - simsStarted) / 1000)
