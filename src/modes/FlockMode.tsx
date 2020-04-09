@@ -5,7 +5,8 @@ import "../App.css";
 
 import { observer, useLocalStore } from "mobx-react";
 import HeatmapRenderer from "../render/renders/HeatmapRenderer";
-import P5 from "p5";
+import P5 from "p5"
+import FlockRenderer from "../render/renders/FlockRenderer";
 
 const App: FC = () => {
   const ref = useRef<HTMLDivElement>(null);
@@ -14,20 +15,17 @@ const App: FC = () => {
 
   useEffect(() => {
     if (ref.current && !render) {
-      const r = HeatmapRenderer(ref.current);
+      const r = FlockRenderer(ref.current);
       setRender(r);
     }
-
-
     return () => {
-      console.log("Removing sketch!!!")
       render?.remove()
     }
   }, [ref.current]);
 
   return (
     <div className="App">
-      <div id={"physics-mode"} ref={ref} />
+      <div ref={ref} />
     </div>
   );
 };

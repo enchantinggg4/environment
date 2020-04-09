@@ -2,53 +2,48 @@ import P5 from "p5";
 import Vector from "../../shared/base/util/Vector";
 import generateHeatMap from "../../shared/base/util/generateHeatMap";
 
-export default class HeatmapRenderer extends P5 {
-  private generator!: (
-    vecs: Vector[],
-    offsetX: number,
-    offsetY: number,
-    gradientFactor: number
-  ) => number[][];
-
-  private items: Vector[] = [];
-  constructor(ref: HTMLElement) {
-    super(() => undefined, ref);
-  }
-
-  setup = () => {
-    this.createCanvas(300, 300);
-    this.generator = generateHeatMap(this.width, this.height);
-    this.pixelDensity(1);
+const sketch = (p: P5) => {
+  const t: P5 & any = p;
+  t.items = [new Vector(50, 50)];
+  p.setup = () => {
+    p.createCanvas(800, 800);
+    t.generator = generateHeatMap(t.width, t.width);
+    p.pixelDensity(1);
   };
 
-  renderHeatmap() {
-    const heatmap = this.generator(this.items, 0, 0, 1000);
+  t.renderHeatmap = () => {
+    console.log("yeah i do this shit...")
+    const heatmap = t.generator(t.items, 0, 0, 1000);
 
-    this.loadPixels();
+    t.loadPixels();
 
-    for (let y = 0; y < this.height; y++) {
-      for (let x = 0; x < this.width; x++) {
-        const offset = x + y * this.width;
+    for (let y = 0; y < t.height; y++) {
+      for (let x = 0; x < t.width; x++) {
+        const offset = x + y * t.width;
         const hmv = heatmap[y][x];
 
-        this.pixels[offset * 4] = hmv * 255;
-        this.pixels[offset * 4 + 1] = 100;
-        this.pixels[offset * 4 + 2] = 100;
-        this.pixels[offset * 4 + 3] = hmv * 255;
+        t.pixels[offset * 4] = hmv * 255;
+        t.pixels[offset * 4 + 1] = 0;
+        t.pixels[offset * 4 + 2] = 0;
+        t.pixels[offset * 4 + 3] = (1 - hmv) * 100;
       }
     }
 
-    this.updatePixels();
-  }
-
-  mousePressed(event?: object): void {
-    this.items.push(new Vector(this.mouseX, this.mouseY));
-    // console.log(this.items);
-  }
-
-  draw = () => {
-    this.background(0);
-    this.ellipse(this.mouseX, this.mouseY, 3, 3);
-    this.renderHeatmap();
+    p.updatePixels()
   };
-}
+  p.mouseDragged = () => {
+    t.items.push(new Vector(t.mouseX, t.mouseY));
+  };
+
+  p.mousePressed = () => {
+    t.items.push(new Vector(t.mouseX, t.mouseY));
+  };
+
+  p.draw = () => {
+    t.background(0);
+    t.items[0] = new Vector(t.mouseX, t.mouseY);
+    t.renderHeatmap();
+  };
+};
+
+export default (ref: HTMLElement) => new P5(sketch, ref);

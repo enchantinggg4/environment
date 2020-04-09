@@ -31,13 +31,14 @@ export default class TestPlayer extends Player<EvolutionEnvironment> {
     const angle = output[0] * (Math.PI * 2);
     const distance = output[1]; // output[1] > 1 ? 1 : output[1] < 0 ? 0 : output[1];
 
+    const shouldEat = output[2] > 0.5;
     const dX = distance * Math.cos(angle) * TestPlayer.SPEED;
     const dY = distance * Math.sin(angle) * TestPlayer.SPEED;
 
     this.x += dX;
     this.y += dY;
-    this.checkFood(env);
-    this.checkCollision(env);
+    this.checkFood(env, shouldEat);
+    // this.checkCollision(env);
   }
 
   private activate(output: number[]) {
@@ -64,14 +65,18 @@ export default class TestPlayer extends Player<EvolutionEnvironment> {
     });
   }
 
-  private checkFood(env: EvolutionEnvironment) {
-    const closestFood = env.foods.find(
-      (it) => it.location.distance(this.location) <= TestPlayer.RADIUS
-    );
+  private checkFood(env: EvolutionEnvironment, shouldEat: boolean) {
+    if (shouldEat) {
+      const closestFood = env.foods.find(
+        (it) => it.location.distance(this.location) <= 2 // make it harder to eat!
+      );
 
-    if (closestFood) {
-      closestFood.alive = false;
-      this.brain.score++;
+      if (closestFood) {
+        closestFood.alive = false;
+        this.brain.score += 10;
+      } else {
+        this.brain.score -= 0.01;
+      }
     }
   }
 

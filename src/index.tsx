@@ -1,16 +1,12 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import "./index.css";
-import EvolutionMode from "./modes/EvolutionMode";
-import PhysicsMode from "./modes/PhysicsMode";
-// import * as serviceWorker from './serviceWorker';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-// @ts-ignore
+import App from "./App";
+
 
 ReactDOM.render(
   <React.StrictMode>
-    {/*<PhysicsMode />*/}
-    <EvolutionMode />
+    <App />
   </React.StrictMode>,
   document.getElementById("root")
 );

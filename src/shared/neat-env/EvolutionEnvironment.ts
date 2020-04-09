@@ -12,8 +12,8 @@ export default class EvolutionEnvironment extends Environment {
   static INPUT_FOOD_COUNT = 3;
   static INPUT_COUNT = EvolutionEnvironment.INPUT_FOOD_COUNT * 2;
   static POP_SIZE = 50;
-  static OUTPUT_COUNT = 2;
-  static TIMEOUT_ITERS = 10000;
+  static OUTPUT_COUNT = 3;
+  static TIMEOUT_ITERS = 1000;
 
   static FOOD_PER_PLAYER = 3;
 

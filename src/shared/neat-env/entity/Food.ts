@@ -11,6 +11,7 @@ export default class Food extends Player<EvolutionEnvironment> {
     return {
       type: "FOOD",
       x: this.x,
+      radius: this.radius,
       y: this.y,
       alive: this.alive,
     };

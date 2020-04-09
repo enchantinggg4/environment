@@ -6,9 +6,13 @@ import { Graph } from "react-d3-graph";
 
 import { LineChart, Line, CartesianGrid, XAxis, YAxis } from "recharts";
 import { observer, useLocalStore } from "mobx-react";
-import {WebsocketMessageListener, WorkerMessageListener} from "../render/MessageListener";
+import {
+  WebsocketMessageListener,
+  WorkerMessageListener,
+} from "../render/MessageListener";
 import ItemRenderer from "../render/renders/ItemRenderer";
-
+import MessageConsumer from "../render/MessageConsumer";
+import P5 from "p5"
 // Attach an event listener to receive calculations from your worker
 
 const App: FC = () => {
@@ -27,7 +31,7 @@ const App: FC = () => {
     links: [],
   });
   const [generation, setGeneration] = useState("0");
-  const [render, setRender] = useState<ItemRenderer | null>(null);
+  const [render, setRender] = useState<P5 & MessageConsumer | null>(null);
   const [headless, setHeadless] = useState(false);
 
   const handleGenerationFinished = (e: any) => {
@@ -47,20 +51,24 @@ const App: FC = () => {
       //   })),
       // };
       // setNetwork(formatted);
-      setGeneration(`Generation ${e.data.generation}, best ${e.data.bestScore}, avrg ${e.data.averageScore}`);
+      setGeneration(
+        `Generation ${e.data.generation}, best ${e.data.bestScore}, avrg ${e.data.averageScore}`
+      );
     }
   };
 
   useEffect(() => {
     if (ref.current && !render) {
-      const r = new ItemRenderer(ref.current);
+      const r = ItemRenderer(ref.current);
 
       const useWorker = true;
 
-
       if (useWorker) {
         // const workerInstance = new WorkerInst();
-        const workerInstance = new Worker('../shared/neat-env/worker', { name: 'worker', type: 'module' });
+        const workerInstance = new Worker("../shared/neat-env/worker", {
+          name: "worker",
+          type: "module",
+        });
         setWorker(workerInstance);
         new WorkerMessageListener(workerInstance, r);
 
@@ -73,6 +81,10 @@ const App: FC = () => {
       }
       setRender(r);
     }
+    return () => {
+      render?.remove();
+      wrk?.terminate();
+    }
   }, [ref.current]);
 
   const data = [...stats];
@@ -81,8 +93,10 @@ const App: FC = () => {
     <div className="App">
       <button
         onClick={() => {
-          if ( render) {
-            render.headless = !headless
+          if (render) {
+
+            // @ts-ignore
+            render.headless = !headless;
           }
           setHeadless(!headless);
           if (wrk)

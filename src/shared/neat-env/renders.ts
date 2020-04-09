@@ -1,6 +1,5 @@
 import P5 from "p5";
 import { IRenderable } from "../../render/renders/ItemRenderer";
-import EvolutionEnvironment from "./EvolutionEnvironment";
 import Vector from "../base/util/Vector";
 import TestPlayer from "./entity/TestPlayer";
 
@@ -18,7 +17,7 @@ export class TestPlayerRenderable implements IRenderable {
   }
 
   private drawFoodInputs(p5: P5) {
-    for (let i = 0; i < EvolutionEnvironment.INPUT_FOOD_COUNT; i++) {
+    for (let i = 0; i < this.inputs.length / 2; i++) {
       if (this.inputs[i * 2] === 0 && this.inputs[i * 2 + 1] === 0) continue;
 
       const dist = (1 - this.inputs[i * 2]) * this.viewDistance;
@@ -57,6 +56,7 @@ export class TestPlayerRenderable implements IRenderable {
 export class FoodRenderable implements IRenderable {
   x: number = 0;
   y: number = 0;
+  radius: number = 0;
   alive: boolean = true;
 
   constructor(p: any) {
@@ -65,7 +65,7 @@ export class FoodRenderable implements IRenderable {
   render(p5: P5): void {
     if (this.alive) {
       p5.fill("yellow");
-      p5.ellipse(this.x, this.y, 5);
+      p5.ellipse(this.x, this.y, this.radius);
     }
   }
 }
