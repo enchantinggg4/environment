@@ -37,7 +37,7 @@ export default class Cell extends Player<CellEnvironment> {
     () => this.minerals(),
     () => this.photosynthesis(),
     () => this.doMove(),
-    // () => this.nothing(),
+    () => this.share(),
   ]);
 
   private actionMapper = mapRange([
@@ -45,6 +45,7 @@ export default class Cell extends Player<CellEnvironment> {
     [0, 0, 255],
     [0, 255, 0],
     [155, 155, 155],
+    [255, 255, 0],
   ]);
 
   constructor(private env: CellEnvironment, public brain: Network) {
@@ -170,7 +171,18 @@ export default class Cell extends Player<CellEnvironment> {
     this.env.move(this, direction);
   }
 
-  private nothing() {
-    this.energy -= Cell.NOTHING_COST;
+  private share() {
+    const share = 3;
+    if (this.energy > share) {
+      const ns = this.env
+        .getAdjacentCells(this)
+        .filter((it) => !!it && it.alive);
+      ns.forEach((it) => {
+        if (it) {
+          it.energy += share / ns.length;
+        }
+      });
+      this.energy -= share;
+    }
   }
 }
